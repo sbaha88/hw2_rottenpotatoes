@@ -7,7 +7,18 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = Movie.ratings
+    session[:sort_by]='title'||session[:sort_by]
+    session[:ratings]||=@all_ratings
+    
+    session[:sort_by] = (params[:sort_by].blank? ? session[:sort_by] : params[:sort_by])
+    session[:ratings] = (params[:ratings].blank? ? session[:ratings] : params[:ratings].keys)
+    
+    redirect_to movies_path if (params.keys.empty?)
+    params.delete_if { |w| w =~ /controller|action$/ }
+    
+    order = (session[:sort_by]=='' ? '' : 'ASC')
+    @movies = Movie.where(:rating => session[:ratings]).order("#{session[:sort_by]} #{order}")
   end
 
   def new

@@ -2,11 +2,18 @@
 %h1 All Movies
 
 %table#movies
+  = form_tag movies_path, :method => :get do
+    Include: 
+    - @all_ratings.each do |rating|
+      = rating
+      = check_box_tag "ratings[#{rating}]", true, session[:ratings].include?(rating)
+    = hidden_field_tag :sort_by, session[:sort_by]
+    = submit_tag 'Refresh', :id => "ratings_submit"
   %thead
     %tr
-      %th Movie Title
+      %th{:class => highlight('title')}= link_to 'Movie Title', movies_path(:sort_by => "title"), :id =>'title'
       %th Rating
-      %th Release Date
+      %th{:class => highlight('release_date')}= link_to 'Release Date', movies_path(:sort_by=>'release_date'), :id =>'release_date'
       %th More Info
   %tbody
     - @movies.each do |movie|
